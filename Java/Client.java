@@ -1,22 +1,71 @@
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ConnectException;
+import java.net.Socket;
+
 public class Client {
 
     /**
      * This method name and parameters must remain as-is
      */
     public static int add(int lhs, int rhs) {
-        return -1;
+        try (Socket socket = new Socket("localhost", PORT)) {
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
+            out.writeObject("add");
+            out.writeObject(lhs);
+            out.writeObject(rhs);
+            return (int) in.readObject();
+        } catch (ConnectException e) {
+            System.out.println("Server is not running. Start the server.");
+            return -1;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
+
     /**
      * This method name and parameters must remain as-is
      */
     public static int divide(int num, int denom) {
-        return -1;
+        try (Socket socket = new Socket("localhost", PORT)) {
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
+            out.writeObject("divide");
+            out.writeObject(num);
+            out.writeObject(denom);
+            return (int) in.readObject();
+        } catch (ConnectException e) {
+            System.out.println("Server is not running. Start the server.");
+            return -1;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
+
     /**
      * This method name and parameters must remain as-is
      */
     public static String echo(String message) {
-        return "";
+        try (Socket socket = new Socket("localhost", PORT)) {
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
+            out.writeObject("echo");
+            out.writeObject(message);
+            return (String) in.readObject();
+        } catch (ConnectException e) {
+            System.out.println("Server is not running. Please start the server.");
+            return "";
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     // Do not modify any code below this line
@@ -37,8 +86,7 @@ public class Client {
         try {
             divide(1, 0);
             System.out.print("X");
-        }
-        catch (ArithmeticException x) {
+        } catch (ArithmeticException x) {
             System.out.print(".");
         }
 
@@ -46,7 +94,7 @@ public class Client {
             System.out.print(".");
         else
             System.out.print("X");
-        
+
         System.out.println(" Finished");
     }
 }
